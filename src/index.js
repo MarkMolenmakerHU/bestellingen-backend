@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const logger = require("./logger");
@@ -27,4 +26,4 @@ async function startServer() {
     });
 }
 
-startServer();
+module.exports = startServer;
