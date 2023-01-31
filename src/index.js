@@ -6,11 +6,7 @@ const connectToDatabase = require("./database");
 const app = express();
 const port = process.env.PORT || 3000;
 
-const corsOptions = {
-    origin: '*',
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(express.json());
 
