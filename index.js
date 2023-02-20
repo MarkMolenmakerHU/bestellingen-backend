@@ -1,2 +1,2 @@
-require('dotenv').config();
+require('custom-env').env();
 require('./src')();
