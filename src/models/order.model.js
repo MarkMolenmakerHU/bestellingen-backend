@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const orderSchema = new Schema({
-    placed_by: {type: String, unique: false},
     firstname: {type: String, unique: false},
     lastname: {type: String, unique: false},
     phonenumber: {type: String, unique: false},
@@ -17,6 +16,11 @@ const orderSchema = new Schema({
         sku: {type: String, unique: false},
         quantity: {type: Number, unique: false},
         quantity_type: {type: String, unique: false},
+    }],
+    activity_log: [{
+        user: {type: String, unique: false},
+        date: {type: Date, unique: false},
+        actions: [{type:String, unique: false}]
     }]
 });
 

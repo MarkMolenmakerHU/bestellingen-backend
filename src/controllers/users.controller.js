@@ -22,8 +22,17 @@ const user = errorHandler(async (req, res) => {
     return userDoc;
 });
 
+const getFullName = errorHandler(async (req, res) => {
+    const userDoc = await models.User.findById(req.params.id).exec();
+    if (!userDoc) {
+        throw new HttpError(400, 'User not found');
+    }
+    return userDoc.firstname + " " + userDoc.lastname;
+});
+
 module.exports = {
     me,
     users,
-    user
+    user,
+    getFullName
 };
