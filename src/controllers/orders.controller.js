@@ -106,7 +106,18 @@ const editState = errorHandler(withTransaction(async (req, res, session) => {
 }));
 
 const orders = errorHandler(async (req, res) => {
-    return await models.Order.find().sort({pickup_date: 'desc'}).exec();
+    if (req.query.sort === "date_asc")
+        return await models.Order.find().sort({pickup_date: 'asc'}).exec();
+    else if (req.query.sort === "name_asc")
+        return await models.Order.find().sort({lastname: 'asc'}).exec();
+    else if (req.query.sort === "name_desc")
+        return await models.Order.find().sort({lastname: 'desc'}).exec();
+    else if (req.query.sort === "state_asc")
+        return await models.Order.find().sort({state: 'asc'}).exec();
+    else if (req.query.sort === "state_desc")
+        return await models.Order.find().sort({state: 'desc'}).exec();
+    else
+        return await models.Order.find().sort({pickup_date: 'desc'}).exec();
 });
 
 const ordersToday = errorHandler(async (req, res) => {
