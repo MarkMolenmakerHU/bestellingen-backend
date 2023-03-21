@@ -10,5 +10,6 @@ router.post('/logoutAll', controllers.auth.logoutAll);
 router.post('/accessToken', controllers.auth.newAccessToken);
 router.post('/refreshToken', controllers.auth.newRefreshToken);
 router.get('/validate', middlewares.verifyAccessToken, (req, res) =>{ res.send({validAccessToken: true})});
+router.get('/validate/refreshToken', middlewares.verifyRefreshToken, (req, res) =>{ res.send({validRefreshToken: true})});
 
 module.exports = router;

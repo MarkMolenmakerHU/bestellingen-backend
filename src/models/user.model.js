@@ -6,7 +6,8 @@ const userSchema = new Schema({
     firstname: {type: String, unique: false},
     lastname: {type: String, unique: false},
     role: {type: String, unique: false},
-    password: {type: String, select: false}
+    password: {type: String, select: false},
+    pin: {type: String, select: false}
 });
 
 const User = model('User', userSchema);

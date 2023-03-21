@@ -10,7 +10,8 @@ const signup = errorHandler(withTransaction(async (req, res, session) => {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         role: req.body.role,
-        password: await argon2.hash(req.body.password)
+        password: await argon2.hash(req.body.password),
+        pin: await argon2.hash(req.body.pin)
     });
     const refreshTokenDoc = models.RefreshToken({
         owner: userDoc.id
@@ -37,7 +38,7 @@ const login = errorHandler(withTransaction(async (req, res, session) => {
     if (!userDoc) {
         throw new HttpError(401, 'Wrong username or password');
     }
-    await verifyPassword(userDoc.password, req.body.password);
+    await verifyPassword(userDoc.password, req.body.password, "Wrong username or password");
 
     const refreshTokenDoc = models.RefreshToken({
         owner: userDoc.id
@@ -76,6 +77,15 @@ const newRefreshToken = errorHandler(withTransaction(async (req, res, session) =
 
 const newAccessToken = errorHandler(async (req, res) => {
     const refreshToken = await validateRefreshToken(req.body.refreshToken);
+
+    // Check if the supplied pin is correct
+    const userDoc = await models.User.findById(refreshToken.userId).select('+pin').exec();
+    if (!userDoc) {
+        throw new HttpError(400, 'User not found');
+    }
+
+    await verifyPassword(userDoc.pin, req.body.pin, "Wrong pincode");
+
     const accessToken = createAccessToken(refreshToken.userId);
 
     return {
@@ -101,7 +111,7 @@ function createAccessToken(userId) {
     return jwt.sign({
         userId: userId
     }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '1d'
+        expiresIn: '5m'
     });
 }
 
@@ -110,15 +120,15 @@ function createRefreshToken(userId, refreshTokenId) {
         userId: userId,
         tokenId: refreshTokenId
     }, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: '30d'
+        expiresIn: '1d'
     });
 }
 
-const verifyPassword = async (hashedPassword, rawPassword) => {
+const verifyPassword = async (hashedPassword, rawPassword, msg) => {
     if (await argon2.verify(hashedPassword, rawPassword)) {
         // password matches
     } else {
-        throw new HttpError(401, 'Wrong username or password');
+        throw new HttpError(401, msg);
     }
 };
 
